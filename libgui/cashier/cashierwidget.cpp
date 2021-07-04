@@ -106,6 +106,7 @@ CashierWidget::CashierWidget(LibG::MessageBus *bus, QWidget *parent)
     new QShortcut(QKeySequence(Qt::Key_F2), this, SLOT(openSearch()));
     new QShortcut(QKeySequence(Qt::Key_F3), this, SLOT(scanCustomer()));
     new QShortcut(QKeySequence(Qt::Key_F4), this, SLOT(payCash()));
+    new QShortcut(QKeySequence(Qt::Key_End), this, SLOT(payCash()));
     new QShortcut(QKeySequence(Qt::Key_F5), this, SLOT(openDrawer()));
     new QShortcut(QKeySequence(Qt::Key_F6), this, SLOT(openPreviousTransaction()));
     new QShortcut(QKeySequence(Qt::Key_F7), this, SLOT(openCheckPrice()));
@@ -122,9 +123,9 @@ CashierWidget::CashierWidget(LibG::MessageBus *bus, QWidget *parent)
     new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_Up), this, SLOT(focusTable()));
     new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_Down), this, SLOT(focusBarcode()));
     new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_Plus), this, SLOT(addNewItemNoBarcode()));
-    ui->labelTitle->setText(Preference::getString(SETTING::MARKET_NAME, "Sultan Minimarket"));
+    ui->labelTitle->setText(Preference::getString(SETTING::MARKET_NAME, "Nano Minimarket"));
     ui->labelSubtitle->setText(
-        GuiUtil::toHtml(Preference::getString(SETTING::MARKET_SUBNAME, "Jln. Bantul\nYogyakarta")));
+        GuiUtil::toHtml(Preference::getString(SETTING::MARKET_SUBNAME, "Jln. Diponegoro\nDeyeng")));
     connect(mAddItemDialog, SIGNAL(addNewItem(QVariantMap)), SLOT(addNewItem(QVariantMap)));
     auto inlineEdit = Preference::getBool(SETTING::INLINE_EDIT_QTY);
     if (inlineEdit) {

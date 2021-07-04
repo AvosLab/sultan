@@ -66,12 +66,14 @@ class AddItemDialog : public QDialog, public LibG::MessageHandler {
     QString mCurrentUnit;
     QVariantList mPriceList;
     QString mCurrentBarcode;
+    QString prefBarcode;
 
     void saveData();
     int getItemFlagFromCheckbox();
     void applyItemFlagToCheckbox(int flag);
 
   private slots:
+    void barcodeClicked();
     void barcodeDone();
     void returnPressed();
     void saveClicked();

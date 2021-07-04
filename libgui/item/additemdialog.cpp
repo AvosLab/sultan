@@ -39,6 +39,9 @@
 #include <QDebug>
 #include <QMessageBox>
 #include <cmath>
+#include <iostream>
+#include <time.h>
+#include <string>
 
 using namespace LibGUI;
 using namespace LibG;
@@ -48,6 +51,7 @@ AddItemDialog::AddItemDialog(LibG::MessageBus *bus, QWidget *parent) : QDialog(p
     ui->setupUi(this);
     ui->doubleBuyPrice->setDecimals(Preference::getInt(SETTING::LOCALE_DECIMAL));
     ui->doubleSellPrice->setDecimals(Preference::getInt(SETTING::LOCALE_DECIMAL));
+    connect(ui->autoBarcode, SIGNAL(clicked(bool)), SLOT(barcodeClicked()));
     connect(ui->pushSave, SIGNAL(clicked(bool)), SLOT(saveClicked()));
     connect(ui->pushSaveAgain, SIGNAL(clicked(bool)), SLOT(saveAndAgainClicked()));
     // connect(ui->lineBarcode, SIGNAL(editingFinished()), SLOT(barcodeDone()));
@@ -170,6 +174,48 @@ void AddItemDialog::reset(bool isAddAgain) {
     ui->checkProduct->setChecked(false);
     ui->labelIngridientPrice->setText("0");
     ui->labelIngridientSellPrice->setText("0");
+}
+
+void AddItemDialog::barcodeClicked(){
+    time_t theTime = time(NULL);
+    struct tm *aTime = localtime(&theTime);
+
+    // int day = aTime->tm_mday;
+    // int month = aTime->tm_mon + 1; // Month is 0 - 11, add 1 to get a jan-dec 1-12 concept
+    int year = aTime->tm_year + 1900; // Year is # years since 1900
+    switch ((year % 10)){
+        case 1:
+            prefBarcode = "A";
+            break;
+        case 2:
+            prefBarcode = "B";
+            break;
+        case 3:
+            prefBarcode = "C";
+            break;
+        case 4:
+            prefBarcode = "D";
+            break;
+        case 5:
+            prefBarcode = "E";
+            break;
+        case 6:
+            prefBarcode = "F";
+            break;
+        case 7:
+            prefBarcode = "G";
+            break;
+        case 8:
+            prefBarcode = "H";
+            break;
+        case 9:
+            prefBarcode = "I";
+            break;
+        default 0:
+            prefBarcode = "J";
+            break;
+    }
+    ui->lineBarcode->setText(prefBarcode);
 }
 
 void AddItemDialog::openBarcode(const QString &barcode) {
