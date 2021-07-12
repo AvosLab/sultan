@@ -66,7 +66,8 @@ class AddItemDialog : public QDialog, public LibG::MessageHandler {
     QString mCurrentUnit;
     QVariantList mPriceList;
     QString mCurrentBarcode;
-    QString prefBarcode;
+    int key;
+    QString barcode;
 
     void saveData();
     int getItemFlagFromCheckbox();

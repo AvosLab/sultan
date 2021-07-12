@@ -42,6 +42,8 @@
 #include <iostream>
 #include <time.h>
 #include <string>
+#include <sstream>
+#include <iomanip>
 
 using namespace LibGUI;
 using namespace LibG;
@@ -177,45 +179,8 @@ void AddItemDialog::reset(bool isAddAgain) {
 }
 
 void AddItemDialog::barcodeClicked(){
-    time_t theTime = time(NULL);
-    struct tm *aTime = localtime(&theTime);
-
-    // int day = aTime->tm_mday;
-    // int month = aTime->tm_mon + 1; // Month is 0 - 11, add 1 to get a jan-dec 1-12 concept
-    int year = aTime->tm_year + 1900; // Year is # years since 1900
-    switch ((year % 10)){
-        case 1:
-            prefBarcode = "A";
-            break;
-        case 2:
-            prefBarcode = "B";
-            break;
-        case 3:
-            prefBarcode = "C";
-            break;
-        case 4:
-            prefBarcode = "D";
-            break;
-        case 5:
-            prefBarcode = "E";
-            break;
-        case 6:
-            prefBarcode = "F";
-            break;
-        case 7:
-            prefBarcode = "G";
-            break;
-        case 8:
-            prefBarcode = "H";
-            break;
-        case 9:
-            prefBarcode = "I";
-            break;
-        default 0:
-            prefBarcode = "J";
-            break;
-    }
-    ui->lineBarcode->setText(prefBarcode);
+    Message msg(MSG_TYPE::ITEM, MSG_COMMAND::CUSTOM_BARCODE);
+    sendMessage(&msg);
 }
 
 void AddItemDialog::openBarcode(const QString &barcode) {
@@ -326,6 +291,13 @@ void AddItemDialog::messageReceived(LibG::Message *msg) {
         } else {
             QMessageBox::warning(this, tr("Error"), msg->data("error").toString());
         }
+    } else if (msg->isTypeCommand(MSG_TYPE::ITEM, MSG_COMMAND::CUSTOM_BARCODE)) {
+        key = msg->data("barcode").toInt() + 1;
+        std::stringstream ss;
+        ss << std::setw(10) << std::setfill('0') << key;
+        std::string s = ss.str();
+        barcode = QString::fromUtf8(s.c_str());
+        ui->lineBarcode->setText(barcode);
     } else if (msg->isType(MSG_TYPE::SUPLIER)) {
         const QVariantList &list = msg->data("data").toList();
         GuiUtil::populateCombo(ui->comboSuplier, list, tr("-- Select Suplier --"));

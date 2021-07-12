@@ -107,6 +107,7 @@ const int DEL = 2;
 const int GET = 3;
 const int QUERY = 4;
 const int RESTORE_DELETED = 5;
+const int CUSTOM_BARCODE = 6;
 // custom command
 const int LOGIN = 20;
 const int CASHIER_PRICE = 21;
