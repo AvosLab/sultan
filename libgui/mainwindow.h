@@ -112,6 +112,7 @@ class GUISHARED_EXPORT MainWindow : public QMainWindow, public LibG::MessageHand
     void resetDatabase();
     void openStockCard();
     void openSoldReturn();
+    void openJavaReport();
     void httpRequestDone(QNetworkReply *reply);
 };
 

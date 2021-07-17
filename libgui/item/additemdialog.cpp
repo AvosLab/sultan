@@ -39,6 +39,11 @@
 #include <QDebug>
 #include <QMessageBox>
 #include <cmath>
+#include <iostream>
+#include <time.h>
+#include <string>
+#include <sstream>
+#include <iomanip>
 
 using namespace LibGUI;
 using namespace LibG;
@@ -48,6 +53,7 @@ AddItemDialog::AddItemDialog(LibG::MessageBus *bus, QWidget *parent) : QDialog(p
     ui->setupUi(this);
     ui->doubleBuyPrice->setDecimals(Preference::getInt(SETTING::LOCALE_DECIMAL));
     ui->doubleSellPrice->setDecimals(Preference::getInt(SETTING::LOCALE_DECIMAL));
+    connect(ui->autoBarcode, SIGNAL(clicked(bool)), SLOT(barcodeClicked()));
     connect(ui->pushSave, SIGNAL(clicked(bool)), SLOT(saveClicked()));
     connect(ui->pushSaveAgain, SIGNAL(clicked(bool)), SLOT(saveAndAgainClicked()));
     // connect(ui->lineBarcode, SIGNAL(editingFinished()), SLOT(barcodeDone()));
@@ -172,6 +178,11 @@ void AddItemDialog::reset(bool isAddAgain) {
     ui->labelIngridientSellPrice->setText("0");
 }
 
+void AddItemDialog::barcodeClicked(){
+    Message msg(MSG_TYPE::ITEM, MSG_COMMAND::CUSTOM_BARCODE);
+    sendMessage(&msg);
+}
+
 void AddItemDialog::openBarcode(const QString &barcode) {
     mCurrentBarcode = barcode;
     Message msg(MSG_TYPE::ITEM, MSG_COMMAND::GET);
@@ -280,6 +291,13 @@ void AddItemDialog::messageReceived(LibG::Message *msg) {
         } else {
             QMessageBox::warning(this, tr("Error"), msg->data("error").toString());
         }
+    } else if (msg->isTypeCommand(MSG_TYPE::ITEM, MSG_COMMAND::CUSTOM_BARCODE)) {
+        key = msg->data("barcode").toInt() + 1;
+        std::stringstream ss;
+        ss << std::setw(10) << std::setfill('0') << key;
+        std::string s = ss.str();
+        barcode = QString::fromUtf8(s.c_str());
+        ui->lineBarcode->setText(barcode);
     } else if (msg->isType(MSG_TYPE::SUPLIER)) {
         const QVariantList &list = msg->data("data").toList();
         GuiUtil::populateCombo(ui->comboSuplier, list, tr("-- Select Suplier --"));

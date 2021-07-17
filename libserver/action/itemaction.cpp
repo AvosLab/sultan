@@ -39,6 +39,7 @@ ItemAction::ItemAction() : ServerAction("items", "barcode") {
     mFunctionMap.insert(MSG_COMMAND::EXPORT, std::bind(&ItemAction::exportData, this, std::placeholders::_1));
     mFunctionMap.insert(MSG_COMMAND::IMPORT, std::bind(&ItemAction::importData, this, std::placeholders::_1));
     mFunctionMap.insert(MSG_COMMAND::SUMMARY, std::bind(&ItemAction::summary, this, std::placeholders::_1));
+    mFunctionMap.insert(MSG_COMMAND::CUSTOM_BARCODE, std::bind(&ItemAction::custom_barcode, this, std::placeholders::_1));
 }
 
 Message ItemAction::insert(Message *msg) {
@@ -489,4 +490,14 @@ QMap<QString, QString> ItemAction::fieldMap() const {
     map.insert("suplier", "supliers.name");
     map.insert("category", "items.category_id");
     return map;
+}
+
+Message ItemAction::custom_barcode(Message *msg){
+    Message message(msg);
+    DbResult res = mDb->select("count(*) as total")->get(mTableName);
+    if (!res.isEmpty())
+        message.addData("barcode", res.first()["total"]);
+    else
+        message.setError(QObject::tr("Item not found"));
+    return message;
 }

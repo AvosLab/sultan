@@ -3,3 +3,4 @@
 /sultan.user
 /build*
 /temp/
+*.db

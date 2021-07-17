@@ -77,6 +77,7 @@
 #include <QProcess>
 #include <QShortcut>
 #include <QTimer>
+#include <QDir>
 
 using namespace LibGUI;
 using namespace LibG;
@@ -130,6 +131,7 @@ void MainWindow::setup() {
     // ui->action_Stock_Card->setEnabled(UserSession::hasPermission(PERMISSION::ADMINISTRATOR));
     ui->action_Cashier->setShortcut(Qt::CTRL + Qt::Key_D);
     ui->action_Items->setShortcut(Qt::CTRL + Qt::Key_I);
+    ui->actionReport->setEnabled(UserSession::hasPermission(PERMISSION::REPORT));
 #ifndef USE_DATE_SETTING
     ui->actionDate_Setting->setEnabled(false);
 #endif
@@ -251,6 +253,7 @@ void MainWindow::setupConnection() {
     connect(ui->actionDate_Setting, SIGNAL(triggered(bool)), SLOT(openDateSetting()));
     connect(ui->action_Reset_Database, SIGNAL(triggered(bool)), SLOT(resetDatabase()));
     connect(ui->actionSold_Return, SIGNAL(triggered(bool)), SLOT(openSoldReturn()));
+    connect(ui->actionReport, SIGNAL(triggered(bool)), SLOT(openJavaReport()));
     // connect(ui->action_Stock_Card, SIGNAL(triggered(bool)), SLOT(openStockCard()));
     ui->actionCheck_Update->setVisible(false);
     connect(&mNam, SIGNAL(finished(QNetworkReply *)), SLOT(httpRequestDone(QNetworkReply *)));
@@ -573,6 +576,19 @@ void MainWindow::openSoldReturn() {
         auto widget = new SoldItemReturnWidget(mMessageBus, this);
         ui->tabWidget->tbnAddTab(widget, tr("Sold Return"), ":/images/16x16/wooden-arrow.png");
     }
+}
+
+void MainWindow::openJavaReport() {
+    QDir dir(qApp->applicationDirPath());
+    QString filePath = dir.absoluteFilePath("");
+    QByteArray byteArray = filePath.toLocal8Bit();
+    const char *file = byteArray.data();
+
+    QProcess *process = new QProcess;
+    process->setWorkingDirectory(filePath);
+    process->setProgram("java");
+    process->setArguments({"-jar","kasreport.jar"});
+    process->start();
 }
 
 void MainWindow::httpRequestDone(QNetworkReply *reply) {
